@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kurs STM32L4 – #2 – platforma sprzętowa i środowisko</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 15px;
+    color: #222;
+    background: #f0f0f0;
+  }
+
+  a { color: #2980b9; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── TOP NAV ── */
+  .top-nav {
+    background: #1a2a3a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 42px;
+  }
+  .top-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 4px;
+  }
+  .top-nav ul li a {
+    color: #cdd8e3;
+    font-size: 13px;
+    padding: 6px 12px;
+    display: block;
+    border-radius: 3px;
+    transition: background .15s;
+  }
+  .top-nav ul li a:hover { background: #2c3e50; color: #fff; text-decoration: none; }
+  .top-nav .nav-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .top-nav .nav-icons span {
+    color: #cdd8e3;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  /* ── WRAPPER ── */
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 10px;
+  }
+
+  /* ── HERO BANNER (kafelki) ── */
+  .hero-banner {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 240px;
+    grid-template-rows: 120px 120px;
+    gap: 4px;
+    margin: 10px 0;
+  }
+
+  /* Duży baner po lewej – zajmuje 2 wiersze */
+  .hero-banner .tile-main {
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
+    background: #bbb;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-banner .tile-main img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .hero-banner .tile-main .caption {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  /* Kafelek środkowy góra */
+  .hero-banner .tile-mid-top {
+    grid-row: 1; grid-column: 2;
+    background: #888;
+    position: relative; overflow: hidden;
+  }
+  .hero-banner .tile-mid-top img { width:100%;height:100%;object-fit:cover; }
+  .hero-banner .tile-mid-top .caption {
+    position:absolute;bottom:0;left:0;right:0;
+    background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:6px 8px;
+  }
+
+  /* Kafelek środkowy dół */
+  .hero-banner .tile-mid-bot {
+    grid-row: 2; grid-column: 2;
+    background: #999;
+    position: relative; overflow: hidden;
+  }
+  .hero-banner .tile-mid-bot img { width:100%;height:100%;object-fit:cover; }
+  .hero-banner .tile-mid-bot .caption {
+    position:absolute;bottom:0;left:0;right:0;
+    background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:6px 8px;
+  }
+
+  /* Kafelek prawy góra (żółty) */
+  .hero-banner .tile-right-top {
+    grid-row: 1; grid-column: 3;
+    background: #f5a623;
+    position: relative; overflow: hidden;
+  }
+  .hero-banner .tile-right-top img { width:100%;height:100%;object-fit:cover; }
+  .hero-banner .tile-right-top .caption {
+    position:absolute;bottom:0;left:0;right:0;
+    background:rgba(0,0,0,.4);color:#fff;font-size:12px;padding:6px 8px;
+  }
+
+  /* Kafelek prawy dół (szary) */
+  .hero-banner .tile-right-bot {
+    grid-row: 2; grid-column: 3;
+    background: #4a4a4a;
+    position: relative; overflow: hidden;
+  }
+  .img-placeholder img {
+  width: 100%;        /* Zdjęcie zawsze dopasuje się do szerokości diva */
+  height: 100%;       /* Zdjęcie zajmie pełną wysokość diva */
+  object-fit: cover;  /* Zdjęcie zostanie inteligentnie przycięte, by wypełnić box bez zniekształceń */
+  display: block;     /* Usuwa zbędne odstępy pod zdjęciem */
+}
+  .hero-banner .tile-right-bot img { width:100%;height:100%;object-fit:cover; }
+  .hero-banner .tile-right-bot .caption {
+    position:absolute;bottom:0;left:0;right:0;
+    background:rgba(0,0,0,.4);color:#fff;font-size:12px;padding:6px 8px;
+  }
+
+  /* Blok 4 ikonek (Kursy / Artykuły / DIY / Forum) */
+  .hero-banner .tile-grid {
+    grid-row: 1 / 3; grid-column: 4;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+  }
+  .tile-grid .icon-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .tile-grid .icon-tile:hover { opacity: .85; }
+  .tile-grid .icon-tile .ico { font-size: 26px; }
+  .tile-grid .t-kursy   { background: #27ae60; }
+  .tile-grid .t-artykuly{ background: #e67e22; }
+  .tile-grid .t-diy     { background: #2980b9; }
+  .tile-grid .t-forum   { background: #8e44ad; }
+
+  /* ── MAIN LAYOUT ── */
+  .page-body {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 20px;
+    margin: 14px 0 30px;
+    align-items: start;
+  }
+
+  /* ── ARTICLE ── */
+  .article-area {
+    background: #fff;
+    padding: 22px 26px 30px;
+    border-radius: 3px;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .breadcrumb a { color: #888; }
+  .breadcrumb span { color: #555; }
+
+  /* Nagłówek artykułu */
+  .article-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2980b9;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  /* Meta (tag + autor + pdf) */
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .tag-badge {
+    background: #e74c3c;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .meta-sep { color: #ccc; }
+
+  /* Sekcja intro (zdjęcie + tekst) */
+  .article-intro {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  .article-intro .intro-img {
+    flex-shrink: 0;
+    width: 220px;
+    height: 150px;
+    background: #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .article-intro .intro-img img { width:100%;height:100%;object-fit:cover; }
+  .article-intro .intro-text {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #333;
+  }
+
+  /* Przycisk Udostępnij */
+  .btn-share {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #3b5998;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background .15s;
+  }
+  .btn-share:hover { background: #2d4373; }
+
+  /* Nawigacja kursu (3 przyciski) */
+  .course-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .course-nav .btn-prev {
+    background: #27ae60; color: #fff; border: none;
+    padding: 9px 16px; border-radius: 3px; font-size: 13px;
+    cursor: pointer; flex: 1; transition: background .15s;
+  }
+  .course-nav .btn-prev:hover { background: #219150; }
+  .course-nav .btn-menu {
+    background: #1abc9c; color: #fff; border: none;
+    padding: 9px 16px; border-radius: 3px; font-size: 13px;
+    cursor: pointer; flex: 1; transition: background .15s;
+  }
+  .course-nav .btn-menu:hover { background: #17a589; }
+  .course-nav .btn-next {
+    background: #27ae60; color: #fff; border: none;
+    padding: 9px 16px; border-radius: 3px; font-size: 13px;
+    cursor: pointer; flex: 1; transition: background .15s;
+  }
+  .course-nav .btn-next:hover { background: #219150; }
+
+  /* Baner sklepu */
+  .shop-banner {
+    background: #eaf4fb;
+    border: 1px solid #bee3f8;
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #2980b9;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .shop-banner .cart-icon { font-size: 18px; }
+
+  /* Treść artykułu */
+  .article-content h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: #222;
+    margin: 20px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #e8e8e8;
+  }
+  .article-content h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin: 16px 0 8px;
+  }
+  .article-content p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 12px;
+  }
+  .article-content ul, .article-content ol {
+    padding-left: 22px;
+    margin-bottom: 12px;
+  }
+  .article-content li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  /* Placeholder na zdjęcie w treści */
+  .img-placeholder {
+    background: #e0e0e0;
+    border: 2px dashed #bbb;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 13px;
+    margin: 14px 0;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 14px; }
+
+  .sidebar-box {
+    background: #fff;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .sidebar-box .sb-header {
+    background: #2c3e50;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 14px;
+  }
+  .sidebar-box ul { list-style: none; }
+  .sidebar-box ul li {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .sidebar-box ul li a {
+    display: block;
+    padding: 9px 14px;
+    font-size: 13px;
+    color: #333;
+    transition: background .12s;
+  }
+  .sidebar-box ul li a:hover { background: #f7f7f7; text-decoration: none; }
+
+  /* Zielony badge "Zacznij tutaj" */
+  .sb-badge {
+    float: right;
+    background: #27ae60;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+
+  /* Przycisk "Sprawdź wszystkie kursy" */
+  .sb-btn-all {
+    display: block;
+    background: #27ae60;
+    color: #fff;
+    text-align: center;
+    padding: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background .15s;
+  }
+  .sb-btn-all:hover { background: #219150; text-decoration: none; }
+
+  /* Baner reklamowy w sidebarze */
+  .sidebar-ad {
+    background: #e0e0e0;
+    height: 90px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 13px;
+    border: 2px dashed #bbb;
+    
+  }
+  .sidebar-ad img {
+  width: 100%;       /* Obrazek zajmie 100% szerokości boxa */
+  height: 100%;      /* Obrazek zajmie 100% wysokości boxa */
+  object-fit: cover; /* Obrazek zostanie przycięty tak, aby wypełnić cały obszar bez rozciągania */
+  display: block;    /* Usuwa zbędne odstępy pod obrazkiem */
+}
+
+  /* Popularne – lista z miniaturami */
+  .sb-popular-list { list-style: none; }
+  .sb-popular-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 8px 12px;
+  }
+  .sb-popular-list li .thumb {
+    flex-shrink: 0;
+    width: 56px; height: 42px;
+    background: #ccc;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .sb-popular-list li .thumb img { width:100%;height:100%;object-fit:cover; }
+  .sb-popular-list li a {
+    font-size: 12px;
+    color: #333;
+    line-height: 1.4;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #1a2a3a;
+    color: #8fa3b1;
+    text-align: center;
+    padding: 18px;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+  footer a { color: #8fa3b1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 760px) {
+    .hero-banner { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .hero-banner .tile-main  { grid-row:auto; grid-column:auto; }
+    .hero-banner .tile-grid  { grid-row:auto; grid-column:1/3; }
+    .page-body { grid-template-columns: 1fr; }
+    .article-intro { flex-direction: column; }
+    .article-intro .intro-img { width: 100%; height: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ TOP NAVIGATION ══════════ -->
+<nav class="top-nav">
+  <ul>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">Forum</a></li>
+    <li><a href="#">Kursy</a></li>
+    <li><a href="#">Poradniki</a></li>
+    <li><a href="#">Projekty</a></li>
+    <li><a href="#">Opisz DIY</a></li>
+    <li><a href="#">Arduino</a></li>
+    <li><a href="#">Wydarzenia</a></li>
+    <li><a href="#">Leksykon</a></li>
+    <li><a href="#">Więcej ▾</a></li>
+  </ul>
+  <div class="nav-icons">
+    <span title="Szukaj"></span>
+    <span title="YouTube"></span>
+    <span title="Facebook"></span>
+    <span title="RSS"></span>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- ══════════ HERO BANNER ══════════ -->
+  <div class="hero-banner">
+
+    <!-- Duży kafelek lewy -->
+    <div class="tile-main">
+      <img src="images/zdj2.webp" alt="Baner główny – wstaw zdjęcie" />
+      <div class="caption">Współczesna maszyna Gutenberga, czyli jak powstało ASML
+
+</div>
+    </div>
+
+    <!-- Środkowy góra -->
+    <div class="tile-mid-top">
+      <img src="images/zdj3.webp" alt="Baner środkowy górny – wstaw zdjęcie" />
+      <div class="caption">Robot z Arduino
+
+Zbuduj go sam!</div>
+    </div>
+
+    <!-- Środkowy dół -->
+    <div class="tile-mid-bot">
+      <img src="images/zdj4.webp" alt="Baner środkowy dolny – wstaw zdjęcie" />
+      <div class="caption">Oto Arduino VENTUNO Q, na którym uruchomisz lokalnie AI</div>
+    </div>
+
+    <!-- Prawy góra -->
+    <div class="tile-right-top">
+      <img src="images/zdj5.webp" alt="Baner prawy górny – wstaw zdjęcie" />
+      <div class="caption">Dlaczego komputery kwantowe są inne niż myślisz?
+
+</div>
+    </div>
+
+    <!-- Prawy dół -->
+    <div class="tile-right-bot">
+      <img src="images/zdj6.webp" alt="Baner prawy dolny – wstaw zdjęcie" />
+      <div class="caption">Anycubic Kobra X i technologia ACE GEN 2 – kolejne podejś...
+
+</div>
+    </div>
+
+    <!-- Siatka ikon (Kursy / Artykuły / DIY / Forum) -->
+    <div class="tile-grid">
+      <div class="icon-tile t-kursy">
+        <div class="ico">🎓</div>
+        <div>Kursy</div>
+      </div>
+      <div class="icon-tile t-artykuly">
+        <div class="ico">🔧</div>
+        <div>Artykuły</div>
+      </div>
+      <div class="icon-tile t-diy">
+        <div class="ico">⚙️</div>
+        <div>DIY</div>
+      </div>
+      <div class="icon-tile t-forum">
+        <div class="ico">💬</div>
+        <div>Forum</div>
+      </div>
+    </div>
+  </div><!-- /hero-banner -->
+
+  <!-- ══════════ PAGE BODY ══════════ -->
+  <div class="page-body">
+
+    <!-- ──── ARTICLE ──── -->
+    <main class="article-area">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#">Blog</a> /
+        <a href="#">Artykuły</a> /
+        <a href="#">STM32</a> /
+        <span>Kurs STM32L4 – #2 – platforma sprzętowa i środowisko</span>
+      </div>
+
+      <!-- Tytuł -->
+      <h1 class="article-title">Kurs STM32L4 – #2 – platforma sprzętowa i środowisko</h1>
+
+      <!-- Meta -->
+      <div class="article-meta">
+        <span class="tag-badge">STM32</span>
+        <span>Piotr, Damian</span>
+        <span class="meta-sep">|</span>
+        <a href="#">PDF (e-book)</a>
+      </div>
+
+      <!-- Intro: zdjęcie + tekst + przycisk -->
+      <div class="article-intro">
+        <div class="intro-img">
+          <!-- Wstaw src zdjęcia kursu -->
+          <img src="images/zdj1.webp" alt="Zdjęcie kursu – wstaw obrazek" />
+        </div>
+        <div class="intro-text">
+          <p>
+            <!-- Wstaw tekst wprowadzający do artykułu -->
+           Mikrokontrolery z rodziny STM32L4 to niezwykle ciekawe układy, które łączą wysoką wydajność oraz niski pobór energii. Pora, aby przygotować się do poznania tych układów w praktyce.
+
+Czym są widoki i perspektywy w STM32CubeIDE, jak utworzyć pierwszy projekt, wgrać go na płytkę Nucleo i wykorzystać debugger? Zaczynamy!
+          </p>
+          <p>
+            Możesz tutaj umieścić drugi akapit z dodatkowymi informacjami o kursie, środowisku, platformie itp.
+          </p>
+          <button class="btn-share">Udostępnij</button>
+        </div>
+      </div>
+
+      <!-- Nawigacja kursu -->
+      <div class="course-nav">
+        <button class="btn-prev">« Poprzednia część</button>
+        <button class="btn-menu">Nawigacja kursu ▾</button>
+        <button class="btn-next">Następna część »</button>
+      </div>
+
+      <!-- Baner sklep -->
+      <div class="shop-banner">
+        <span class="cart-icon">🛒</span>
+        <span>Zamów zestaw elementów i zacznij naukę w praktyce! <a href="#">Przejdź do sklepu »</a></span>
+      </div>
+
+      <!-- ── Treść artykułu ── -->
+      <div class="article-content">
+
+        <h2>Czego dowiesz się z tej części kursu?</h2>
+        <p>
+          <!-- Wstaw tekst sekcji -->
+          Zaczynamy od krótkiego wprowadzenia do STM32L4 – m.in. omówimy rodziny popularnych układów i zapoznamy się z mikrokontrolerem, który będzie głównym bohaterem kursu. Najważniejsza część tego artykułu dotyczy przygotowania środowiska, utworzenia projektu i wgrania go na płytkę Nucleo.
+        </p>
+      
+
+        <h2>Dlaczego STM32?</h2>
+        <p>
+          W rozwiązaniach hobbystycznych królowały kiedyś mikrokontrolery AVR. Układy takie jak ATmega8 czy ATmega16 znał chyba każdy hobbysta. Później przyszła era Arduino, które sprawiło, że programiści nie muszą „przejmować się” sprzętem – w teorii ten sam kod zadziała identycznie na różnych płytkach. Jednak nadal większość projektów bazuje na mikrokontrolerach AVR (np. ATmega328P z Arduino UNO).
+
+Korzystanie z takich 8-bitowych układów ma wiele zalet, ale niestety ich możliwości są również bardzo mocno ograniczone. Mikrokontrolery STM32 to znacznie wydajniejsze układy, które z wielu względów stały się niezwykle popularne, zarówno wśród hobbystów, jak i w rozwiązaniach profesjonalnych. Dzięki nim możliwe jest po prostu tworzenie rozbudowanych urządzeń, które wymagają dużej mocy obliczeniowej oraz licznych peryferiów (np. wiele kanałów ADC, wiele SPI itd.).
+        </p>
+
+        <!-- Placeholder na zdjęcie w treści -->
+        <div class="img-placeholder" style="height:220px;">
+          <img src="images/duze1.webp">
+        </div><p>
+Mikrokontrolery z rodziny STM32 zyskały olbrzymią popularność nie tylko ze względu na świetny sprzęt i mnogość dostępnych peryferiów. Czynnikami mocno przemawiającymi za tymi układami są również bardzo dobra dokumentacja techniczna i świetne wsparcie producenta, który m.in. dostarcza wygodne w użyciu biblioteki. Dzięki temu stosunkowo łatwo można przenosić programy z jednego typu układów na zupełnie inne (np. jeszcze wydajniejsze).
+
+Jeszcze kilka(naście) lat temu, zanim pojawiły się takie rozwiązania, zmiana mikrokontrolera wymagała przepisania większości kodu od nowa (ze względu na inne rejestry).
+
+Naszym zdaniem układy STM32 są obecnie świetnym wyborem dla osób, które myślą o elektronice w bardziej poważnych kategoriach. Będzie to dobry wybór dla wszystkich, którzy chcieliby wejść na wyższy poziom programowania mikrokontrolerów, używany w profesjonalnych zastosowaniach.
+
+Trend taki jest widoczny też na naszym forum. Pytania związane z zaawansowanymi projektami dotyczą najczęściej układów STM32, a ogłoszenia o pracy dla programistów systemów wbudowanych posiadają najczęściej w wymogach właśnie znajomość układów STM32.
+        </p><h2>Jak odnaleźć się w świecie STM32?</h2>
+        <p>
+          Mikrokontrolerów z rodziny STM32 jest bardzo dużo. W momencie tworzenia tego kursu w oficjalnym IDE do wyboru było ponad 1800 układów (a to i tak nie wszystkie). Tak wielka różnorodność jest z jednej strony dużą zaletą, bo pozwala na dobranie właściwego układu praktycznego do każdego projektu, z drugiej jednak strony wybór ten może być na początku wręcz przytłaczający. Warto zatem zacząć od ekspresowego rozeznania się w dostępnych rozwiązaniach.
+        </p>
+
+        <h2>Czym jest ARM?</h2>
+        <p>
+          Podczas programowania mikrokontrolerów często natrafia się na stwierdzenie, że dany układ posiada „rdzeń ARM” (np. Cortex-M). O co tu chodzi? Dawniej jedna firma projektowała od podstaw cały mikrokontroler, a następnie go produkowała. Z czasem uświadomiono sobie, że opracowanie nowego układu całkowicie od podstaw jest czasochłonne, a klienci wcale nie są zadowoleni z tego, że na rynku jest wiele niezgodnych ze sobą układów.
+
+Informacje w tej sekcji to tylko telegraficzny skrót, który ma jedynie nakreślić początkującym „tło historyczne”. Celowo zdecydowaliśmy się na pewne uproszczenia.
+
+Pierwsze układy ARM zostały zaprojektowane przez firmę Acorn RISC Machines (stąd wzięła się ich nazwa). Z czasem wydzielono inżynierów odpowiadających za ten projekt do nowej firmy – Advanced RISC Machines (Arm Ltd.). Zmieniono również całkowicie model biznesowy.
+        </p>
+      
+        <!-- Kolejny placeholder na zdjęcie -->
+        <div class="img-placeholder" style="height:200px;">
+          <img src="images/duze2.webp">
+        </div>
+<p>Firma ta jako jedna z pierwszych doceniła wartość własności intelektualnej – zamiast inwestować w drogie fabryki i produkować własne układy, „jedynie” projektuje rdzenie i sprzedaje licencje. Producenci fizycznych układów (mikrokontrolerów i mikroprocesorów) kupują projekt rdzenia, który wykorzystują do stworzenia swojego układu. Dodają niezbędne pamięci i układy peryferyjne oraz produkują układy. Dzięki temu projektowanie całego mikrokontrolera jest o wiele łatwiejsze i szybsze, a klienci otrzymują rozwiązania opierające się na popularnym standardzie.
+
+Firma Arm Ltd. została w 2020 roku przejęta przez firmę NVIDIA za 40 mld dolarów.</p>
+</p><h2>Architektury i rdzenie ARM</h2>
+        <p>
+          Tysiące pracowników Arm Ltd. zajmuje się tym tematem od wielu lat, więc powstało już sporo różnych rdzeni. Główny podział wyznaczają architektury – można o nich myśleć jak o generacjach procesorów. Nas interesuje architektura ARM w wersji ARMv7. W obrębie każdej architektury może być dostępnych wiele różnych rdzeni. W tym przypadku nadano im nazwy rozpoczynające się od „Cortex”:
+
+Cortex-A – mikroprocesory, przeznaczone głównie do obsługi systemów operacyjnych, np. Linux, Android, Windows CE, iOS. Wymagają zewnętrznych układów do pracy.
+Cortex-R – układy przeznaczone do systemów czasu rzeczywistego.
+Cortex-M – mikrokontrolery, czyli układy, które mają zintegrowaną pamięć i układy peryferyjne.
+Nas interesuje oczywiście rdzeń Cortex-M, który dzieli się jeszcze między innymi na:
+
+Cortex-M0 – proste układy, które mają być konkurencją dla popularnych 8-bitowców.
+Cortex-M3 – główna rodzina układów, która pojawiła się jako pierwsza na rynku.
+Cortex-M4 – wersja wydajniejsza od Cortex-M3, dodatkowo wyposażona w koprocesor arytmetyczny (FPU) oraz zestaw instrukcji DSP (ang. digital signal processor).
+Cortex-M7 – najszybsza i najbardziej rozbudowana wersja rdzenia.
+        </p>
+
+<h2>Pierwszy projekt w STM32CubeIDE</h2>
+        <p>
+          Pora, aby nareszcie utworzyć pierwszy projekt. Z menu wybieramy opcję: File > New > STM32 Project. Uruchomiony zostanie kreator, dzięki któremu skonfigurujemy nowy projekt. Pierwszy krok to wybór mikrokontrolera, na który będziemy pisać kod. Dzięki temu nasze IDE załaduje odpowiednie biblioteki.
+
+Za pomocą filtrów (po lewej stronie) możemy łatwo odnaleźć mikrokontroler, który będzie idealny do naszego projektu. Możemy wskazać, jaki interesuje nas rdzeń, jakie peryferia powinny być na pokładzie tego układu itd. W naszym przypadku wybór jest prosty, bo wiemy, że przykłady z tego kursu będą bazowały na STM32L476RG – taką nazwę wpisujemy więc w pole Part Number.
+        </p>
+
+        <!-- Placeholder na zdjęcie w treści -->
+        <div class="img-placeholder" style="height:220px;">
+          <img src="images/tworzenie1.png">
+        </div>
+
+
+        <p>
+          Natychmiast po wpisaniu symbolu zobaczymy skrót informacji na temat wybranego mikrokontrolera, jego cenę (dla zamówień hurtowych) oraz informację o płytce rozwojowej, na której go znajdziemy. W oknie tym od razu mamy też dostęp do dokumentów, które powiązane są z tym układem.
+
+Po wybraniu odpowiedniego układu naciskamy przycisk Next. W kolejnym oknie zostaniemy zapytani o nazwę projektu. Wpisujemy np. „projekt1”, pozostałe opcje pozostawiamy bez zmian i klikamy Next.
+
+</p>
+
+        <!-- Placeholder na zdjęcie w treści -->
+        <div class="img-placeholder" style="height:220px;">
+          <img src="images/tworzenie2.webp">
+        </div>
+        <p>Teraz widzimy podsumowanie naszego nowego projektu. Warto upewnić się tutaj, że zaznaczona jest opcja Copy only the necessary library files. Następnie naciskamy przycisk Finish. Podczas tworzenia pierwszego projektu mogą pojawić się jeszcze jakieś dodatkowe pytania (związane z konfiguracją IDE) – wszędzie najlepiej zgadzać się na domyślne propozycje.
+
+</p>
+<div class="img-placeholder" style="height:220px;">
+          <img src="images/tworzenie3.webp">
+        </div>
+        <p>W tym momencie STM32CubeIDE zacznie pobierać obszerne biblioteki. Na szczęście ta czynność jest wykonywana tylko raz, a mówiąc precyzyjniej: raz dla danej rodziny (np. STM32L4) i raz do czasu, aż pojawi się ich aktualizacja. Musimy się tutaj szykować na kolejne 700 MB danych (lub więcej).
+Co więcej, domyślnie wszystkie biblioteki będą zainstalowane na dysku oznaczonym literą C. Nawet jeśli wybierzemy inną lokalizację, to po pojawieniu się nowszej wersji IDE i tak wszystko prawdopodobnie wróci na domyślny dysk. Po pobraniu i przetworzeniu bibliotek zobaczymy okno, w którym pojawi się graficzne przedstawienie naszego mikrokontrolera. Warto jednak poświęcić chwilę na poznanie samego środowiska, a konkretnie tego, jakie są dostępne perspektywy.
+</p>
+
+
+
+
+
+
+
+
+
+        <h2>Podsumowanie</h2>
+        <p>
+          Podsumowanie części kursu. Opisz co zostało omówione i co będzie w kolejnej części.
+        </p>
+
+      </div><!-- /article-content -->
+
+      <!-- Nawigacja kursu (dolna) -->
+      <div class="course-nav" style="margin-top:24px;">
+        <button class="btn-prev">« Poprzednia część</button>
+        <button class="btn-menu">Nawigacja kursu ▾</button>
+        <button class="btn-next">Następna część »</button>
+      </div>
+
+    </main><!-- /article-area -->
+
+    <!-- ──── SIDEBAR ──── -->
+    <aside class="sidebar">
+
+      <!-- Box: Kursy -->
+      <div class="sidebar-box">
+        <div class="sb-header">Kursy elektroniki i programowania</div>
+        <ul>
+          <li><a href="#">Poradnik prezentowy</a></li>
+          <li><a href="#">Kurs podstaw elektroniki <span class="sb-badge">Zacznij tutaj</span></a></li>
+          <li><a href="#">Kurs elektroniki, poziom II</a></li>
+          <li><a href="#">Kurs podstaw lutowania</a></li>
+          <li><a href="#">Kurs Arduino, poziom I (podstawy)</a></li>
+          <li><a href="#">Kurs Raspberry Pi, poziom I (podstawy)</a></li>
+          <li><a href="#">Kurs programowania STM32L4</a></li>
+          <li><a href="#">Kurs micro:bit (dla dzieci i młodzieży)</a></li>
+        </ul>
+        <a href="#" class="sb-btn-all">Sprawdź wszystkie kursy »</a>
+      </div>
+
+      <!-- Baner reklamowy -->
+      <div class="sidebar-ad">
+  <img src="images/reklama.webp" alt="Reklama" />
+</div>
+
+      <!-- Box: Popularne -->
+      <div class="sidebar-box">
+        <div class="sb-header">Popularne</div>
+        <ul class="sb-popular-list">
+          <li>
+            <div class="thumb"><img src="images/miniaturka1.jpg" alt="miniatura 1" /></div>
+            <a href="#">Kurs elektroniki, poziom I (podstawy) – #0 – wstęp, spis treści</a>
+          </li>
+          <li>
+            <div class="thumb"><img src="images/miniatruka2.jpg" alt="miniatura 2" /></div>
+            <a href="#">Kurs STM32L4 – #1 – wstęp, spis treści, dla kogo jest ten kurs</a>
+          </li>
+          <li>
+            <div class="thumb"><img src="images/miniaturka3.jpg" alt="miniatura 3" /></div>
+            <a href="#">Kurs elektroniki – #6 – diody krzemowe oraz świecące (LED)</a>
+          </li>
+          <li>
+            <div class="thumb"><img src="images/miniaturka4.jpg" alt="miniatura 4" /></div>
+            <a href="#">Kurs STM32 F1 HAL – następny popularny artykuł</a>
+          </li>
+        </ul>
+      </div>
+
+    </aside><!-- /sidebar -->
+
+  </div><!-- /page-body -->
+</div><!-- /wrapper -->
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <p>&copy; 2024 Nazwa Strony. Wszelkie prawa zastrzeżone. | <a href="#">Polityka prywatności</a> | <a href="#">Kontakt</a></p>
+</footer>
+
+</body>
+</html>
