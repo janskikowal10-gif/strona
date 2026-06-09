@@ -364,6 +364,42 @@
   .sidebar-box ul li {
     border-bottom: 1px solid #f0f0f0;
   }
+  .task-box {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-left: 4px solid #2980b9; /* Niebieski pasek z boku */
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+.task-title {
+  font-weight: bold;
+  color: #2980b9;
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: block;
+}
+.task-code {
+  background: #272822;
+  color: #f8f8f2;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  border-radius: 3px;
+  margin: 10px 0;
+  white-space: pre-wrap; /* Zachowuje formatowanie kodu */
+}
+.task-solution {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 10px;
+}
+.task-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #ccc;
+  font-size: 14px;
+  color: #333;
+}
   .sidebar-box ul li a {
     display: block;
     padding: 9px 14px;
@@ -448,6 +484,18 @@
     font-size: 12px;
     margin-top: 10px;
   }
+  /* Styl dla zrzutów ekranu w zadaniach */
+.task-screenshot {
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #eee;
+}
+.task-screenshot img {
+  width: 100%;
+  display: block;
+}
   footer a { color: #8fa3b1; }
 
   /* ── RESPONSIVE ── */
@@ -717,6 +765,926 @@ Co więcej, domyślnie wszystkie biblioteki będą zainstalowane na dysku oznacz
         <p>
           Podsumowanie części kursu. Opisz co zostało omówione i co będzie w kolejnej części.
         </p>
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 3a:</span>
+  
+        <div class="task-code">
+        /* USER CODE BEGIN WHILE */
+while (1)
+{
+  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+  HAL_Delay(125);
+  /* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Zaprogramuj miganie diody z częstotliwością 4Hz w pętli głównej while(1) wspomagając się
+funkcją HAL_Delay. Napisz dwie wersje programu:
+a) wykorzystując odwracanie stanu wyjścia LD2 (funkcja HAL_GPIO_TogglePin)
+        </div>
+
+        
+        </div>
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 3b:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+  HAL_Delay(125);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_Delay(125);
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Zaprogramuj miganie diody z częstotliwością 4Hz w pętli głównej while(1) wspomagając się
+funkcją HAL_Delay. Napisz dwie wersje programu:
+b) wykorzystując ustawianie stanu wyjścia LD2 (funkcja HAL_GPIO_WritePin). 
+        </div>
+
+        </div>
+
+
+
+
+
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 5:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+  /* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        W głównej pętli zapisuj stan fizycznego przycisku (niebieskiego) w zmiennej typu
+GPIO_PinState. Wykorzystując debugger sprawdź wartość zmiennej w czasie działania
+programu podczas gdy przycisk jest wciśnięty i podczas gdy jest puszczony. 
+        </div>
+
+        </div>
+
+
+<div class="task-footer">
+        Rejestr r0, przechowujący wartość zwracaną przez funkcję, przyjmuje wartość 1 gdy
+przycisk jest puszczony (stan wysoki) oraz 0 gdy przycisk jest wciśnięty (stan niski).
+Rejestry r1 oraz r3 utrzymują stałą wartość 8192, co odpowiada masce bitowej pinu
+trzynastego (213).
+W rejestrach ogólnych modyfikowanych jest wiele bitów jednocześnie, ponieważ
+przechowują one całe liczby (wartości zmiennych lub adresy pamięci), a nie pojedyncze linie sygnałowe.
+        </div>
+
+
+
+         <div class="task-box">
+        <span class="task-title">Zadanie 6:</span>
+
+        <div class="task-solution">
+       Podczas debugowania programu z poprzedniego zadania odnajdź rejestry (zakładka Registers
+po prawej stronie okna -> General Registers), których wartość zmienia się w zależności od
+stanu przycisku (stanu na pinie PC13). Jakie wartości przyjmują te rejestry w momencie, gdy
+przycisk jest wciśnięty, a jakie kiedy jest puszczony? Czy w rejestrach zmienia się tylko jeden
+bit, czy więcej?
+        </div>
+
+        </div>
+
+
+<div class="task-box">
+        <span class="task-title">Zadanie 7a:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+  if (stan_przycisku == GPIO_PIN_RESET)
+  {
+    HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+  }
+  else
+  {
+    HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  }
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Powiąż stan przycisku z wbudowaną diodą. Naciśnięty przycisk generuje zapalenie się
+diody, puszczony zgaszenie diody. 
+        </div>
+
+        </div>
+
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 7b:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+GPIO_PinState poprzedni_stan = GPIO_PIN_SET;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+  if (poprzedni_stan == GPIO_PIN_RESET && stan_przycisku == GPIO_PIN_SET)
+  {
+    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+  }
+  poprzedni_stan = stan_przycisku;
+/* USER CODE END WHILE */
+}
+        </div>
+
+
+<div class="task-box">
+        <span class="task-title">Zadanie 7a:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+  if (stan_przycisku == GPIO_PIN_RESET)
+  {
+    HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+  }
+  else
+  {
+    HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  }
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Powiąż stan przycisku z wbudowaną diodą. Naciśnięty przycisk generuje zapalenie się
+diody, puszczony zgaszenie diody. 
+        </div>
+
+        </div>
+
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 7c:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+GPIO_PinState poprzedni_stan = GPIO_PIN_SET;
+uint32_t opoznienia[] = {20, 50, 100, 500, 1000};
+uint8_t indeks_czestotliwosci = 0;
+void changeLEDFrequency(void);
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+  changeLEDFrequency();
+  HAL_Delay(opoznienia[indeks_czestotliwosci]);
+/* USER CODE END WHILE */
+}
+
+/* USER CODE BEGIN 4 */
+void changeLEDFrequency(void)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+  if (poprzedni_stan == GPIO_PIN_SET && stan_przycisku == GPIO_PIN_RESET)
+  {
+    indeks_czestotliwosci++;
+
+    if (indeks_czestotliwosci >= 5)
+    {
+      indeks_czestotliwosci = 0;
+    }
+  }
+  poprzedni_stan = stan_przycisku;
+}
+/* USER CODE END 4 */
+        </div>
+
+        <div class="task-solution">
+        Ponownie zaprogramuj miganie diody LD2, tak jak w punkcie 3 (korzystając
+z HAL_Delay). Następnie napisz funkcję changeLEDFrequency (wywołanie
+w głównej pętli), której zadaniem jest zmiana częstotliwości migania po naciśnięciu
+przycisku B1. Funkcja ma za zadanie wybrać następną częstotliwość ze zbioru {25Hz,
+10Hz, 5Hz, 1Hz, 0.5Hz} po każdym naciśnięciu przycisku. Reakcja na przycisk ma być
+natychmiastowa (bez oczekiwania na puszczenie). 
+        </div>
+
+        
+        </div>
+
+
+
+
+
+
+
+
+<div class="task-box">
+        <span class="task-title">Zadanie 7d:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+GPIO_PinState poprzedni_stan = GPIO_PIN_SET;
+uint32_t opoznienia[] = {20, 50, 100, 500, 1000};
+uint8_t indeks_czestotliwosci = 0;
+uint32_t ostatni_czas_migania = 0;
+void changeLEDFrequency(void);
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  changeLEDFrequency();
+  if (HAL_GetTick() - ostatni_czas_migania >= opoznienia[indeks_czestotliwosci])
+  {
+    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+    ostatni_czas_migania = HAL_GetTick();
+  }
+/* USER CODE END WHILE */
+}
+
+/* USER CODE BEGIN 4 */
+void changeLEDFrequency(void)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+  if (poprzedni_stan == GPIO_PIN_SET && stan_przycisku == GPIO_PIN_RESET)
+  {
+    indeks_czestotliwosci++;
+
+    if (indeks_czestotliwosci >= 5)
+    {
+      indeks_czestotliwosci = 0;
+    }
+  }
+  poprzedni_stan = stan_przycisku;
+}
+/* USER CODE END 4 */
+        </div>
+
+        <div class="task-solution">
+        Zmiana częstotliwości migania diody działa poprawnie jedynie podczas szybszego
+migania. Podczas wolniejszego migania częstotliwość nie chce się przełączać (lub
+przełącza się dopiero po kilku próbach). Z czego wynika ten problem? Aby go
+rozwiązać napisz drugą wersję programu wykorzystując funkcję HAL_GetTick
+zamiast HAL_Delay.
+        </div>
+ <div class="task-footer">
+        Podczas wolniejszego migania funkcja HALDELAY wprowadza procesor w stan blokady. Mikrokontroler zostaje wówczas „zamrożony” na określony czas i fizycznie nie
+wykonuje kodu odpowiedzialnego za sprawdzenie stanu przycisku, co powoduje ignorowanie kliknięć.
+
+        </div>
+        </div>
+       
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 7e:</span>
+<div class="task-solution">
+        Przetestuj przycisk RESET (czarny). Służy on do natychmiastowego zatrzymania
+i ponownego uruchomienia (ang. restart) programu, po którym powinna wrócić
+początkowa częstotliwość migania diody: 25Hz. Czy zatrzymanie i ponowne
+uruchomienie programu następuje po wciśnięciu, czy po zwolnieniu przycisku? 
+        </div>
+<div class="task-footer">
+        Zatrzymanie programu (stan resetu) następuje natychmiast po wciśnięciu czarnego
+przycisku – wtedy procesor jest zablokowany, a dioda przestaje migać.
+Ponowne uruchomienie programu (restart od początku, czyli od częstotliwości 25Hz)
+następuje dopiero po zwolnieniu (puszczeniu) przycisku RESET.
+
+
+        </div>
+        </div>
+
+
+<div class="task-box">
+  <span class="task-title">Zadanie 8a</span>
+  
+  <div class="task-code">
+    /* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == B1_Pin)
+  {
+    stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+    if (stan_przycisku == GPIO_PIN_RESET)
+    {
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+    }
+    else
+    {
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+    }
+  }
+}
+/* USER CODE END 4 */
+  </div>
+
+  <div class="task-screenshot">
+    <img src="images/8a.png" alt="Zrzut ekranu z zadania" />
+  </div>
+  <div class="task-screenshot">
+    <img src="images/8a1.png" alt="Zrzut ekranu z zadania" />
+  </div>
+
+  <div class="task-solution">
+    Tryb przerwaniowy:
+Należy w konfiguratorze CubeMX włączyć przerwania dla pinów 15:10. Należy również zmienić
+ustawienie GPIO mode dla pinu PC13 tak, aby możliwe było zgłaszanie przerwań zboczem
+narastającym i opadającym (kurs Forbot - lekcja #7). Domyślnie jest ustawione samo zbocze
+narastające.
+a) Zrealizuj przełączanie świecenia diody przyciskiem, podobnie jak w zadaniu 7a, jednak
+tym razem zamiast trybu blokującego wykorzystaj mechanizm przerwań. Kod
+sterujący diodą powinien być zamieszczony w definicji funkcji obsługi przerwania
+HAL_GPIO_EXTI_Callback.
+Podpowiedź: Przerwanie może pochodzić od dowolnego pinu z przedziału PC10-PC15,
+a więc na początku definicji funkcji należy sprawdzić, czy pochodzi z pinu powiązanego
+z przyciskiem. 
+  </div>
+</div>
+
+
+
+
+ <div class="task-box">
+        <span class="task-title">Zadanie 8b:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+GPIO_PinState poprzedni_stan_przycisku = GPIO_PIN_RESET;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == B1_Pin)
+  {
+    stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+    if (stan_przycisku == GPIO_PIN_SET && poprzedni_stan_przycisku == GPIO_PIN_RESET)
+    {
+      HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+    }
+    poprzedni_stan_przycisku = stan_przycisku;
+  }
+}
+/* USER CODE END 4 */
+        </div>
+
+        <div class="task-solution">
+        W trybie przerwaniowym zrealizuj przełączanie świecenia diody po puszczeniu
+przycisku, podobnie jak w zadaniu 7b. 
+        </div>
+
+        
+        </div>
+
+
+
+<div class="task-box">
+  <span class="task-title">Zadanie 1</span>
+  
+
+  <div class="task-screenshot">
+    <img src="images/1.png" alt="Zrzut ekranu z zadania" />
+  </div>
+  
+
+  <div class="task-solution">
+    W projekcie z poprzednich zajęć ustaw w konfiguratorze komunikację UART (kurs Forbot -
+lekcja #4). Skorzystaj z modułu LPUART1. Ustaw tryb komunikacji asynchroniczy, prędkość
+komunikacji (baud rate) na 57600 bit/s. W ustawieniach zaawansowanych wyłącz opcję
+Overrun. Zapobiegnie to nadpisywaniu nieprzetworzonych danych w buforze.
+
+<br><br>
+
+1. Uruchomienie modułu
+W drzewie po lewej stronie (Categories) przejdź do zakładki Connectivity.
+
+Kliknij LPUART1.
+
+W menu Mode zmień ustawienie z "Disable" na Asynchronous.
+
+Zauważ, że odpowiednie piny na schemacie płytki (na podglądzie po prawej) zostaną podświetlone na zielono (zazwyczaj są to piny PA2 i PA3).
+
+2. Ustawienie parametrów komunikacji (Baud Rate)
+Poniżej, w sekcji Parameter Settings, przejdź do zakładki Basic Parameters.
+
+W polu Baud Rate wpisz wartość: 57600.
+
+Pozostałe parametry (Word Length, Parity, Stop Bits) powinny pozostać domyślne (8 bitów danych, brak parzystości, 1 bit stopu), chyba że wymaga tego inne urządzenie, z którym się łączysz.
+
+3. Wyłączenie opcji Overrun
+Aby wyłączyć mechanizm Overrun (zapobiegający nadpisywaniu danych), musisz przejść do ustawień przerwań:
+
+W tym samym oknie konfiguracji LPUART1 przejdź do zakładki NVIC Settings.
+
+Zaznacz pole Enabled przy LPUART1 global interrupt (jest to wymagane do poprawnego działania mechanizmu obsługi danych).
+
+Uwaga techniczna: W starszych wersjach CubeMX opcję Overrun wyłączało się bezpośrednio w zakładce "Parameter Settings" -> "Advanced Parameters". Jeśli w Twojej wersji CubeMX widzisz sekcję Advanced Parameters, rozwiń ją i poszukaj opcji Overrun Behavior lub Overrun Detection i ustaw ją na Disable (lub w odpowiedni sposób ograniczający przerwanie błędów).
+
+Jeśli w nowszej wersji CubeMX ta opcja jest ukryta, realizuje się to programowo w kodzie poprzez modyfikację rejestru CR3 (bit OVRDIS - Overrun Disable).
+
+4. Generowanie kodu
+Kliknij przycisk Device Configuration Tool Code Generation (ikona kółek zębatych na górnym pasku lub Alt+K), aby zapisać zmiany.
+
+Po wygenerowaniu projektu, w pliku main.c (w sekcji /* USER CODE BEGIN 2 */) powinieneś zobaczyć zainicjalizowany moduł hlpuart1.
+
+
+
+  </div>
+</div>
+
+
+
+<div class="task-box">
+        <span class="task-title">Zadanie 2a:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN Includes */
+#include <string.h>
+/* USER CODE END Includes */
+
+/* USER CODE BEGIN 2 */
+char komunikat_powitalny[] = "Hello from Nucleo!\r\n";
+HAL_UART_Transmit(&hlpuart1, (uint8_t*)komunikat_powitalny, strlen(komunikat_powitalny), 1000);
+/* USER CODE END 2 */
+        </div>
+        <div class="task-screenshot">
+    <img src="images/2a.png" alt="Zrzut ekranu z zadania" />
+  </div>
+
+        <div class="task-solution">
+        Wyślij wiadomość „Hello from Nucleo!” na przejściówkę USB-UART wbudowaną na
+płycie Nucleo64. W celu odebrania wysłanych danych uruchom aplikację hterm (ikona
+na pulpicie) i połączz dostępnym portem COM. Ustaw parametry komunikacji zgodne
+z wprowadzonymi w konfiguratorze CubeMX. Wywołaj funkcję wysyłającą dane w taki
+sposób, żeby długość tekstu była automatycznie obliczana (bez „hardkodowania”). Do
+czego służy parametr timeout? Jaką maksymalną wartość może przyjąć?
+Podpowiedź: Nazwę uchwytu portu UART (pierwszy parametr funkcji) można
+odczytać w kodzie automatycznie wygenerowanej funkcji MX_LPUART1_UART_Init.
+        </div>
+<div class="task-footer">
+       Określa maksymalny czas (w milisekundach), przez jaki funkcja HALUARTTransmit próbuje wysłać dane. Ponieważ to tryb blokujący, procesor czeka i nie robi nic
+innego. Jeśli w tym czasie transmisja się nie powiedzie, funkcja przerywa pracę i
+zwraca błąd, zapobiegając wiecznemu zawieszeniu programu.
+Maksymalna wartość to HALMAXDELAY (czyli systemowo 0xFFFFFFFF). Przekazanie tej wartości całkowicie wyłącza odliczanie czasu – funkcja będzie czekać w
+nieskończoność, aż wszystkie bajty zostaną pomyślnie wysłane.
+
+
+        </div>
+        
+        </div>
+        
+
+<div class="task-box">
+        <span class="task-title">Zadanie 2b:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+char komunikat_powitalny[] = "Hello from Nucleo!\r\n";
+GPIO_PinState stan_przycisku;
+GPIO_PinState poprzedni_stan = GPIO_PIN_SET;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+  if (stan_przycisku == GPIO_PIN_SET && poprzedni_stan == GPIO_PIN_RESET)
+  {
+    HAL_Delay(20);
+
+    if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_SET)
+    {
+      HAL_UART_Transmit(&hlpuart1, (uint8_t*)komunikat_powitalny, strlen(komunikat_powitalny), HAL_MAX_DELAY);
+    }
+  }
+  poprzedni_stan = stan_przycisku;
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Zmodyfikuj kod z zad. 2a, aby wiadomość była wysyłana za każdym razem, kiedy
+naciśnięty zostanie przycisk (tuż po jego puszczeniu). Odbieranie danych powinno
+działać w pętli nieskończonej.
+
+zamiast HAL_Delay.
+        </div>
+        </div>
+
+        
+
+
+
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 2c:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+GPIO_PinState stan_przycisku;
+GPIO_PinState poprzedni_stan = GPIO_PIN_SET;
+uint32_t czas_wcisniecia = 0;
+uint32_t czas_trzymania = 0;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  stan_przycisku = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+  if (stan_przycisku == GPIO_PIN_RESET && poprzedni_stan == GPIO_PIN_SET)
+  {
+    HAL_Delay(20);
+    czas_wcisniecia = HAL_GetTick();
+  }
+
+  if (stan_przycisku == GPIO_PIN_SET && poprzedni_stan == GPIO_PIN_RESET)
+  {
+    HAL_Delay(20);
+    czas_trzymania = HAL_GetTick() - czas_wcisniecia;
+
+    if (czas_trzymania >= 500)
+    {
+      HAL_UART_Transmit(&hlpuart1, (uint8_t*)"-", 1, HAL_MAX_DELAY);
+    }
+    else if (czas_trzymania > 50)
+    {
+      HAL_UART_Transmit(&hlpuart1, (uint8_t*)".", 1, HAL_MAX_DELAY);
+    }
+  }
+  poprzedni_stan = stan_przycisku;
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Zmodyfikuj kod z zad. 2b, aby umożliwiał wysyłanie informacji kodem Morse’a.
+W przypadku krótkiego wciśnięcia przycisku powinien zostać wysłany znak kropki,
+a w przypadku długiego przytrzymania (co najmniej 500 ms) – znak kreski.
+Podpowiedź: Skorzystaj z funkcji HAL_GetTick z poprzedniego ćwiczenia.
+        </div>
+        </div>
+
+
+
+
+
+               <div class="task-box">
+        <span class="task-title">Zadanie 2d:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+uint8_t bufor_odbiorczy[5];
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  HAL_UART_Receive(&hlpuart1, bufor_odbiorczy, 5, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&hlpuart1, bufor_odbiorczy, 5, HAL_MAX_DELAY);
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Napisz program odbierający w pętli 5-bajtowe wiadomości wysłane przez terminal,
+a następnie odsyłający je z powrotem. Jak zachowa się program w przypadku wysłania
+wiadomości krótszej lub dłużej niż pięć znaków?
+<br><br>
+Odpowiedź
+Przy wysłaniu komunikatu krótszego niż 5 znaków, program zawiesi się na instrukcji
+odbioru i nie odeśle danych, dopóki bufor nie zostanie dopełniony brakującymi
+literami. Jeśli natomiast wyślemy zbyt długi tekst, procesor przechwyci i odeśle tylko
+pierwszych 5 znaków. Reszta nadmiarowych danych nie przepadnie — zostanie w
+pamięci podręcznej portu szeregowego i wywoła natychmiastową reakcję programu
+w następnym cyklu pętli while(1).
+        </div>
+        </div>
+
+
+
+                       <div class="task-box">
+        <span class="task-title">Zadanie 2e:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+uint8_t odebrany_znak;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  HAL_UART_Receive(&hlpuart1, &odebrany_znak, 1, HAL_MAX_DELAY);
+
+  if (odebrany_znak == '1')
+  {
+    HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+    HAL_UART_Transmit(&hlpuart1, (uint8_t*)"OK_\r\n", 5, HAL_MAX_DELAY);
+  }
+  else if (odebrany_znak == '0')
+  {
+    HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+    HAL_UART_Transmit(&hlpuart1, (uint8_t*)"OK_\r\n", 5, HAL_MAX_DELAY);
+  }
+  else
+  {
+    HAL_UART_Transmit(&hlpuart1, (uint8_t*)"ERROR_\r\n", 8, HAL_MAX_DELAY);
+  }
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Napisz program odbierający wiadomości wysłane przez terminal. Gdy odebrana
+zostanie wiadomość „1”, zapalaj diodę. Gdy odebrana zostanie wiadomość „0”, gaś
+diodę. Każdorazowo odpowiadaj na przesłane dane komunikatem „OK_„ lub
+„ERROR_„ (jeśli otrzymano komunikat inny niż 1/0).
+
+        </div>
+        </div>
+
+
+
+
+
+
+                               <div class="task-box">
+        <span class="task-title">Zadanie 2f:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+uint8_t odebrany_znak;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+  if (HAL_UART_Receive(&hlpuart1, &odebrany_znak, 1, HAL_MAX_DELAY) == HAL_OK)
+  {
+    if (odebrany_znak >= '0' && odebrany_znak <= '9')
+    {
+      int liczba_migniec = odebrany_znak - '0';
+
+      for (int i = 0; i < liczba_migniec; i++)
+      {
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+        HAL_Delay(250);
+
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+        HAL_Delay(250);
+      }
+    }
+    else
+    {
+      HAL_UART_Transmit(&hlpuart1, (uint8_t*)"ERROR\r\n", 7, HAL_MAX_DELAY);
+    }
+  }
+/* USER CODE END WHILE */
+}
+        </div>
+
+        <div class="task-solution">
+        Napisz program odbierający jednoznakowe wiadomości wysłane przez terminal.
+Odebraną wiadomość każdorazowo konwertuj na liczbę całkowitą, a następnie
+zaświeć i zgaś diodę (z dowolną częstotliwością) tyle razy, ile wynosiła podana liczba.
+Jeśli odebrana wiadomość nie jest liczbą, to zamiast migania diody wysyłaj
+w odpowiedzi komunikat „ERROR_”
+
+        </div>
+        </div>
+
+
+ <div class="task-box">
+        <span class="task-title">Zadanie 3a:</span>
+  
+    <div class="task-screenshot">
+    <img src="images/3a.png" alt="Zrzut ekranu z zadania" />
+  </div>
+
+        <div class="task-solution">
+        Dodaj do projektu obsługę przerwań od LPUART1, jeżeli nie jest włączona (kurs Forbot
+- lekcja #7). W kontrolerze przerwań NVIC zezwól na globalne przerwania od
+wybranego UART. <br><br>
+Włączenie globalnego przerwania w module LPUART1
+W programie STM32CubeMX, w drzewie po lewej stronie (Categories), kliknij ponownie Connectivity -> LPUART1.
+
+W zakładce NVIC Settings (znajdującej się w oknie konfiguracji LPUART1) zaznacz pole wyboru Enabled w wierszu LPUART1 global interrupt.
+
+Spowoduje to, że w wygenerowanym kodzie (w pliku stm32l4xx_it.c) automatycznie pojawi się funkcja obsługi przerwania LPUART1_IRQHandler().
+
+        </div>
+        </div>
+
+
+
+        <div class="task-box">
+        <span class="task-title">Zadanie 3b:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+uint8_t odebrany_znak;
+/* USER CODE END PV */
+
+/* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if (huart->Instance == LPUART1)
+  {
+    if (odebrany_znak == '1')
+    {
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+      HAL_UART_Transmit_IT(&hlpuart1, (uint8_t*)"OK", 4);
+    }
+    else if (odebrany_znak == '0')
+    {
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+      HAL_UART_Transmit_IT(&hlpuart1, (uint8_t*)"OK", 4);
+    }
+    else
+    {
+      HAL_UART_Transmit_IT(&hlpuart1, (uint8_t*)"ERROR", 7);
+    }
+    
+    HAL_UART_Receive_IT(&hlpuart1, &odebrany_znak, 1);
+  }
+}
+/* USER CODE END 4 */
+        </div>
+
+        <div class="task-solution">
+        Zmodyfikuj kod z zadania 2e o wykorzystanie funkcji wysyłającej dane w trybie
+przerwaniowym. Tym razem funkcja odbierająca dane nie powinna być wywoływana
+w pętli (aby nie obciążać niepotrzebnie procesora).
+UWAGA: Przerwania mogą pochodzić od dowolnego modułu UART (w przyszłości
+możemy wprowadzić ich obsługę), a więc na początku definicji funkcji obsługi
+przerwania należy sprawdzać, czy pochodzi ono z modułu, z którego korzystamy, czyli
+domyślnie LPUART1.
+
+
+        </div>
+        </div>
+
+
+
+
+
+    <span class="task-title">Zadanie 4:</span>
+  
+        <div class="task-code">
+/* USER CODE BEGIN PV */
+uint8_t bufor_morse_odbior[100];
+/* USER CODE END PV */
+
+/* USER CODE BEGIN 2 */
+HAL_UARTEx_ReceiveToIdle_IT(&hlpuart1, bufor_morse_odbior, 100);
+/* USER CODE END 2 */
+
+/* USER CODE BEGIN 4 */
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+  if (huart->Instance == LPUART1)
+  {
+    HAL_UART_Transmit_IT(&hlpuart1, bufor_morse_odbior, Size);
+    HAL_UARTEx_ReceiveToIdle_IT(&hlpuart1, bufor_morse_odbior, 100);
+  }
+}
+/* USER CODE END 4 */
+/* USER CODE END 4 */
+        </div>
+
+        <div class="task-solution">
+        Tryb przerwaniowy z wykrywanym stanem bezczynności:
+Napisz program, który podobnie jak w zadaniu 2d odbiera wiadomość wysłaną przez terminal
+i odsyła ją z powrotem. Tym razem jednak skorzystaj z przerwań i zadbaj o to, aby można było
+przesyłać wiadomości o dowolnej długości (nieprzekraczającej 100 znaków).
+W tym celu należy użyć funkcję odbierającą dane z wykrywaniem stanu bezczynności:
+HAL_UARTEx_ReceiveToIdle_IT i odpowiadającą jej funkcję obsługi przerwania:
+HAL_UARTEx_RxEventCallback. Umożliwiają one łatwy odbiór danych o zmiennej
+długości.
+W jakich dwóch przypadkach zgłoszone zostaje przerwanie po wywołaniu funkcji
+HAL_UARTEx_ReceiveToIdle_IT?<br><br>
+
+Odpowiedź
+Pierwszym przypadkiem jest kiedy nastąpi całkowite zapełnienie bufora, po odebraniu setnego bajta dannych. Natomiast drugą sytuacją jest wykrycie bezczynności
+IDLE, tzn, że komputer nie przesyłał żadnych danych przez czas przynmajmniej
+jednej ramki.
+
+
+
+
+        </div>
+        </div>
+
+
+
+
+
+        <div class="task-box">
+        <span class="task-title">HTERM jak usatwic co i jak</span>
+  
+  
+
+        <div class="task-solution">
+        Instrukcja obsługi HTerm dla projektu Nucleo
+1. Znalezienie portu w systemie Windows
+
+Podłącz płytkę Nucleo do portu USB komputera.
+
+Kliknij prawym przyciskiem myszy na przycisk Start i wybierz Menedżer urządzeń.
+
+Rozwiń sekcję Porty (COM i LPT).
+
+Znajdź pozycję o nazwie STMicroelectronics STLink Virtual COM Port.
+
+Zapisz numer portu, który znajduje się w nawiasie (np. COM3).
+
+2. Konfiguracja programu HTerm
+
+Uruchom HTerm.exe.
+
+W sekcji Connection wykonaj następujące kroki:
+
+Port: Kliknij przycisk Refresh (ikona strzałek), a następnie wybierz z listy swój port (np. COM3).
+
+Baud rate: Zmień na 57600.
+
+Data: Zostaw 8.
+
+Parity: Zostaw None.
+
+Stop: Zostaw 1.
+
+Kliknij przycisk Connect. Jeśli port został otwarty poprawnie, przycisk zmieni się na Disconnect.
+
+3. Test komunikacji
+
+Odbieranie danych: W oknie Received Data (duże białe pole) będą pojawiać się dane wysyłane z Nucleo. Upewnij się, że masz zaznaczoną opcję ASCII w prawym dolnym rogu tego pola, aby dane były czytelne jako tekst.
+
+Wysyłanie danych:
+
+W polu Type (na samym dole) wpisz znak, np. 1 lub 0.
+
+Kliknij przycisk Send.
+
+Jeśli wszystko działa, Twój kod powinien odebrać ten znak i wysłać odpowiedź zwrotną, którą zobaczysz w oknie Received Data.
+
+4. Rozwiązywanie problemów
+
+Błąd "Port not available": Oznacza to, że port jest używany przez inny program. Pamiętaj, aby przed próbą połączenia w HTerm zamknąć inne terminale (np. jeśli masz otwartą konsolę w STM32CubeIDE, może ona blokować dostęp do portu COM).
+
+Brak odpowiedzi: Upewnij się, że w kodzie programu (w sekcji /* USER CODE BEGIN 2 */) poprawnie zainicjalizowałeś funkcję HAL_UARTEx_ReceiveToIdle_IT.
+
+        </div>
+        </div>
+        <a href="images/sprawozdanieASK (1).pdf" download="instrukcja_hterm.pdf">
+  pobierz
+</a>
+
+
+
 
       </div><!-- /article-content -->
 
